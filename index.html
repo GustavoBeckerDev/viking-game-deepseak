@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>VIKINGR — A Rodada de Eirik</title>
+<meta name="description" content="Jogo de plataforma 2D em pixel art: colete ingredientes, ferva hidromel e beba cervejas com poderes pelo fjord.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%230b0e13'/%3E%3Cpath d='M4 4h8v6H4z' fill='%23f4c542'/%3E%3Cpath d='M5 3h6v2H5z' fill='%23fff6d8'/%3E%3Cpath d='M12 5h2v3h-2z' fill='%238a5a32'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main id="stage">
+    <canvas id="game" width="480" height="270" aria-label="VIKINGR — jogo de plataforma"></canvas>
+
+    <div id="overlay">
+      <section class="screen active" id="screen-title">
+        <div class="crest">ᛉ</div>
+        <div class="logo">VIKINGR</div>
+        <p class="tagline">A RODADA DE EIRIK</p>
+        <p class="sub">Colete mel, cevada, lúpulo e água. Ferva hidromel no caldeirão. Beba pelo caminho — e chegue ao salão antes que o inverno feche o fjord.</p>
+        <div class="menu">
+          <button class="primary" data-act="play">JOGAR</button>
+          <button data-act="controls">COMO JOGAR</button>
+          <button data-act="sound">SOM: LIGADO</button>
+        </div>
+        <p class="best" id="best-line"></p>
+        <p class="hint">Setas/A-D andar · Espaço pular 2x (mortal) · J golpe · K arremessar · Shift rolar · ↓ ferver · Esc pausar</p>
+      </section>
+
+      <section class="screen" id="screen-controls">
+        <h2 class="screen-title">COMO JOGAR</h2>
+        <div class="keys">
+          <div><kbd>←</kbd><kbd>→</kbd><span>Andar (ou <kbd>A</kbd> <kbd>D</kbd>)</span></div>
+          <div><kbd>Espaço</kbd><span>Pular — aperte 2x no ar para pulo duplo com mortal</span></div>
+          <div><kbd>J</kbd><span>Golpe de machado (ou <kbd>X</kbd>)</span></div>
+          <div><kbd>K</kbd><span>Arremessar machado — 3 machados, cada um volta em 3s</span></div>
+          <div><kbd>Shift</kbd><span>Rolar (ou <kbd>C</kbd>) — derruba e mata inimigos</span></div>
+          <div><kbd>↓</kbd><span>Ferver no caldeirão com 3 ingredientes (ou <kbd>S</kbd>)</span></div>
+          <div><kbd>Espaço</kbd><span>Na água: segure para nadar para cima</span></div>
+          <div><kbd>Esc</kbd><span>Pausar</span></div>
+          <div><kbd>M</kbd><span>Ligar / desligar som</span></div>
+        </div>
+        <div class="legend">
+          <p><b>Ingredientes:</b> mel, cevada, lúpulo e água. Cada um vale pontos e enche o caldeirão.</p>
+          <p><b>Cervejas:</b> dourado = fúria · escura = escudo · IPA = inimigos lentos · inverno = regeneração.</p>
+          <p><b>Perigo:</b> inimigos brilham e mostram <b>!</b> antes de atacar. Role, pule ou contra-ataque.</p>
+          <p><b>Água:</b> não mata. Nade, respire e saia com um pulo.</p>
+        </div>
+        <button class="primary" data-act="back">VOLTAR</button>
+      </section>
+
+      <section class="screen" id="screen-pause">
+        <h2 class="screen-title">PAUSADO</h2>
+        <p class="screen-sub">A cerveja esfria, mas o fjord espera.</p>
+        <div class="menu">
+          <button class="primary" data-act="resume">CONTINUAR</button>
+          <button data-act="retry">REINICIAR FASE</button>
+          <button data-act="controls">CONTROLES</button>
+          <button data-act="sound">SOM: LIGADO</button>
+          <button data-act="menu">MENU</button>
+        </div>
+      </section>
+
+      <section class="screen" id="screen-level">
+        <h2 class="screen-title">FASE CONCLUÍDA</h2>
+        <p class="screen-sub" id="lc-name"></p>
+        <div class="stats">
+          <div><span>MATERIAIS</span><strong id="lc-mat">0/0</strong></div>
+          <div><span>CERVEJAS</span><strong id="lc-beers">0</strong></div>
+          <div><span>FERMENTAS</span><strong id="lc-brews">0</strong></div>
+          <div><span>TEMPO</span><strong id="lc-time">00:00</strong></div>
+        </div>
+        <div class="menu">
+          <button class="primary" data-act="next" id="btn-next">PRÓXIMA FASE</button>
+          <button data-act="menu">MENU</button>
+        </div>
+      </section>
+
+      <section class="screen" id="screen-victory">
+        <h2 class="screen-title">A RODADA É SUA</h2>
+        <p class="screen-sub">Eirik chegou ao salão com os barris cheios e a barba molhada.</p>
+        <div class="stats">
+          <div><span>MATERIAIS</span><strong id="vc-mat">0</strong></div>
+          <div><span>CERVEJAS</span><strong id="vc-beers">0</strong></div>
+          <div><span>FERMENTAS</span><strong id="vc-brews">0</strong></div>
+          <div><span>TEMPO</span><strong id="vc-time">00:00</strong></div>
+          <div><span>QUEDAS</span><strong id="vc-deaths">0</strong></div>
+        </div>
+        <p class="best" id="vc-best"></p>
+        <div class="menu">
+          <button class="primary" data-act="play">JOGAR DE NOVO</button>
+          <button data-act="menu">MENU</button>
+        </div>
+      </section>
+    </div>
+
+    <div id="banner"><h2 id="banner-title"></h2><p id="banner-sub"></p></div>
+    <div id="toast"><strong id="toast-title"></strong><span id="toast-sub"></span></div>
+
+    <div id="touch">
+      <div class="touch-left">
+        <button data-action="left" aria-label="Esquerda">◀</button>
+        <button data-action="right" aria-label="Direita">▶</button>
+      </div>
+      <div class="touch-right">
+        <button data-action="down" aria-label="Ferver">↓</button>
+        <button data-action="throw" aria-label="Arremessar machado">K</button>
+        <button data-action="jump" aria-label="Pular">▲</button>
+        <button data-action="attack" aria-label="Golpe de machado">J</button>
+        <button data-action="roll" aria-label="Rolar">↻</button>
+      </div>
+    </div>
+  </main>
+
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "name": "viking-game",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node scripts/serve.mjs",
+    "check": "for f in src/*.js; do node --check \"$f\" || exit 1; done && echo 'syntax ok'"
+  }
+}
